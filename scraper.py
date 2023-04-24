@@ -1,5 +1,5 @@
 import re
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse, urldefrag
 
 from bs4 import BeautifulSoup
 
@@ -28,8 +28,17 @@ def extract_next_links(url, resp):
     # Find all the links
     for temp in soup.find_all('a', href=True):
         href = temp.get('href')
-        links.append(href)
-        return links
+        # Absolute url with href
+        absoluteURL = urljoin(url,href)
+        # Absolute url without fragment part
+        absoluteURL,fragment = urldefrag(absoluteURL)
+        if is_valid(absoluteURL):
+            links.append(absoluteURL)
+    # Testing    
+    print(links)
+    print()
+    links = []    
+    return links
 
 def is_valid(url):
     # Decide whether to crawl this url or not.
