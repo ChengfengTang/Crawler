@@ -1,8 +1,8 @@
 CS121 2023S
 
-Crawler features: Checks sitemaps to see if the change frequency and last modified date indicate that the current version is outdated and needs to be recrawled.
+Crawler features to be implemented: 
 
-Follow the politeness rule (0.5s per server) and only crawl websites that allows crawling.
+Follow the politeness rule (0.5s per server) and only crawl websites that allows crawling. ☑️
 
 Multi-threaded crawling
 
