@@ -99,6 +99,7 @@ def extract_next_links(url, resp):
     links = []
 
     global depth
+    # Might be going too deep if we are 10 levels down
     if depth.get(resp.url, 0) > 10:
         return []
 
@@ -138,7 +139,13 @@ def is_valid(url):
     try:
         parsed = urlparse(url)
         robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
+
+        robotsTxt = "User-agent: *                   # All other spiders should avoid" + \
+                    "Disallow: /bin/" + \
+                    "Disallow: /~mpufal/          # Ticket #50447 requested by ugrad"
+
         # Not sure how to get robots.txt without using request
+        # Manual sets here
 
         if parsed.scheme not in set(["http", "https"]):
             return False
@@ -151,8 +158,14 @@ def is_valid(url):
         # /folder
         # /?page=1 ...
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
-        trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+", ]
+        trapPattern = [r"/calendar/\d{4}/\d{2}",
+                       r"(/folder)+",
+                       r"\?page=\d+",
+                       # not allowed by robots
+                       r"ics.uci.edu/bin",
+                       r"ics.uci.edu/~mpufal",
+                       ]
+
         for x in trapPattern:
             if re.search(x, url):
                 return False
