@@ -39,7 +39,7 @@ def scraper(url, resp):
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:5])
     print(domainCount)
     print(subdomains)
-    return links
+    return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
     # Implementation required.
