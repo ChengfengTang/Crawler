@@ -82,7 +82,7 @@ def extract_next_links(url, resp):
         visited.append(absoluteURL)
     # Testing    
     print(links)
-    # links = []
+    links = []
     return links
 
 def is_valid(url):
