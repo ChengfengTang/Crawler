@@ -62,7 +62,7 @@ def extract_next_links(url, resp):
     # Should help with infinite traps
     global visited
     if resp.url in visited:
-        return ß[]
+        return []
     
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
