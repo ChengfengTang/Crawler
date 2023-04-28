@@ -17,6 +17,11 @@ subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
+    print(longestPage)
+    print(visited)
+    print(words)
+    print(subdomains)
+    print(domainCount)
     #print(len(visited)) The total number of pages 
     return [link for link in links if is_valid(link)]
 
@@ -46,7 +51,7 @@ def extract_next_links(url, resp):
     # update longest page
     global longestPage
     longestPage = max(longestPage, len(text))
-
+    print(longestPage)
     links = []
     # Find all the links
     for temp in soup.find_all('a', href=True):
