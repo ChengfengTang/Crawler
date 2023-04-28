@@ -78,7 +78,6 @@ def extract_next_links(url, resp):
         # Absolute url without fragment part
         absoluteURL,fragment = urldefrag(absoluteURL)
         global visited
-        global domainCount
         links.append(absoluteURL)
         visited.append(absoluteURL)
     # Testing    
