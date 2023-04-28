@@ -86,7 +86,11 @@ def is_valid(url):
         if subDomain.startswith("www."):
             subDomain = subDomain [4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
-        domain = re.search(domainP, subDomain).group("domain")
+        domainM = re.search(domainP, subDomain)
+        if (domainM):
+            domain = domainM.group("domain")
+        else:
+            print("no domain found " + subDomain)
         print("d: " + domain)
         print("sd: " + subDomain)
         # Ex.
