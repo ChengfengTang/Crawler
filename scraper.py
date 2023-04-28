@@ -61,7 +61,7 @@ def extract_next_links(url, resp):
 
     # Find all the words
     global words
-    for x in re.findall(r'\b\w+\b', text):
+    for x in re.findall(r'[a-zA-Z0-9]+', text.lower())
         if(x not in stopWords): # self-exp
             words[x] = words.get(x,0) +1
 
