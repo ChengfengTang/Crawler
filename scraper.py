@@ -17,11 +17,6 @@ subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    print(longestPage)
-    print(visited)
-    print(words)
-    print(subdomains)
-    print(domainCount)
     #print(len(visited)) The total number of pages 
     return [link for link in links if is_valid(link)]
 
@@ -51,7 +46,7 @@ def extract_next_links(url, resp):
     # update longest page
     global longestPage
     longestPage = max(longestPage, len(text))
-    print(longestPage)
+
     links = []
     # Find all the links
     for temp in soup.find_all('a', href=True):
@@ -88,7 +83,10 @@ def is_valid(url):
         visited.append(url)
         domain = ""
         subDomain = parsed.hostname
-        domain = subDomain.split(".")[0]
+        if subDomain.startswith("www."):
+            subDomain = subDomain [4:]
+        domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
+        domain = re.search(domainP, subDomain).group("domain")
         print("d: " + domain)
         print("sd: " + subDomain)
         # Ex.
@@ -114,4 +112,10 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
-
+"""
+if __name__ == "__main__":
+    is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
+    print()
+    is_valid("http://vision.ics.uci.edu/somethings/anything/")
+    is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
+"""
