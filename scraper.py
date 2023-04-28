@@ -109,13 +109,13 @@ def extract_next_links(url, resp):
     global fingerprints
     fp = []
     for i in range(len(text) - 2):
-        threeG = text[i:i + 1]
-        temp = hash(threeG.join(""))
-        # Already visited a similar page
+        threeG = text[i:i + 3]
+        temp = hash("".join(threeG))
         if temp % 4 == 0:
             fp.append(temp)
     for x in fingerprints:
         # similarity level S > 90% near duplicate
+        # AKA Already visited a similar page
         if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
             return []
     fingerprints.append(fp)
