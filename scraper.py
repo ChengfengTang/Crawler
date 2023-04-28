@@ -144,8 +144,7 @@ def is_valid(url):
         # https://www.informatics.uci.edu/very-top-footer-menu-items/news/page/57
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
                        r"/blog/page/\d+",
-                       r"^(?!.*calendar\.ics\.uci\.edu).*"
-                       ]
+                       r"^(?!.*calendar\.ics\.uci\.edu).*"]
 
         for x in trapPattern:
             if re.search(x,url):
@@ -175,7 +174,7 @@ def is_valid(url):
 
         # if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
         #    return False
-        
+
         domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
         # print(domainCount)
