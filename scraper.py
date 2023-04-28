@@ -92,6 +92,10 @@ def is_valid(url):
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
+
+        # If not a subdomain
+        if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
+            domain = subDomain
         if domain not in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             return False
         domainCount[subDomain] = domainCount.get(subDomain,0) + 1
