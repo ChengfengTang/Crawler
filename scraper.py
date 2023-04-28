@@ -39,7 +39,7 @@ def scraper(url, resp):
     links = extract_next_links(url, resp)
     print(len(visited))  # The total number of pages
     print(longestPage)
-    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:10])
+    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:25])
     print(domainCount)
     print(subdomains)
     return links
@@ -98,9 +98,9 @@ def extract_next_links(url, resp):
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
-        print("redirected" + resp.url)
-        print(url)
-        print()
+        # print("redirected" + resp.url)
+        # print(url)
+        # print()
         if is_valid(resp.url):
             links.append(resp.url)
 
@@ -142,18 +142,21 @@ def is_valid(url):
         # /?page=1 ...
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+"]
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+",
+                       r"^(?!.*calendar\.ics\.uci\.edu).*"]
         for x in trapPattern:
             if re.search(x,url):
                 return False
 
         domain = ""
         subDomain = parsed.hostname
+        if subDomain is None:
+            return False
         if subDomain.startswith("www."):
             subDomain = subDomain[4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
         domainM = re.search(domainP, subDomain)
-        if (domainM):
+        if domainM:
             domain = domainM.group("domain")
         else:
             # for url like uci.edu/
