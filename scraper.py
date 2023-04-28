@@ -2,9 +2,18 @@ import re
 from urllib.parse import urljoin, urlparse, urldefrag
 
 from bs4 import BeautifulSoup
+from collections import defaultdict
 
+# Finds the number of unique page
 visited = []
+# Finds the 50 most common words
+words = {}
+# Finds the longest page
+longestPage = 0;
+# Finds how many pages for each subdomain
 domainCount = {}
+# Finds how many subdomains for each main domain
+subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
@@ -27,6 +36,17 @@ def extract_next_links(url, resp):
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
+    text = soup.get_text()
+
+    # Find all the words
+    global words
+    for x in re.findall(r'\b\w+\b', text):
+        words[x] = words.get(x,0) +1
+
+    # update longest page
+    global longestPage
+    longestPage = max(longestPage, len(text))
+
     links = []
     # Find all the links
     for temp in soup.find_all('a', href=True):
@@ -37,6 +57,8 @@ def extract_next_links(url, resp):
         absoluteURL,fragment = urldefrag(absoluteURL)
         if is_valid(absoluteURL):
             global visited
+            global domainCount
+            domainCount[absoluteURL] = domainCount.get(url,0) + 1
             links.append(absoluteURL)
             visited.append(absoluteURL)
     # Testing    
@@ -48,22 +70,33 @@ def is_valid(url):
     # Decide whether to crawl this url or not.
     # If you decide to crawl it, return True; otherwise return False.
     # There are already some conditions that return False.
-    global visited 
+    global visited
+    global domainCount
+    global subdomains
     try:
         parsed = urlparse(url)
         if parsed.scheme not in set(["http", "https"]):
             return False
-        # Outside of allowed domains
-        #print(parsed.netloc)        
-        #if parsed.netloc not in set(["www.ics.uci.edu","www.cs.uci.edu","www.informatics.uci.edu", "www.stat.uci.edu"]):
-        #    return False
-        print(parsed.netloc)
-        #already visited
+        # Already visited
         if url in visited:
             return False
-        else:
-            global domainCount
-            domainCount[url] = 
+        visited.append(url)
+        domain = ""
+        subDomain = parsed.hostname
+        domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
+        domain = re.search(domainP, subDomain).group("domain")
+        print("d: " + domain)
+        print("sd: " + subDomain)
+        # Ex.
+        # domain: ics.uci.edu
+        # subdomain: vision.ics.edu
+        if domain not in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
+            return False
+        domainCount[subDomain] = domainCount.get(subDomain,0) + 1
+        subdomains[domain].add(subDomain)
+        print(domainCount)
+        print(subdomains)
+
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
@@ -77,3 +110,9 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
+
+if __name__ == "__main__":
+    is_valid("http://vision.ics.uci.edu/somethings/anything/")
+    print()
+    is_valid("http://vision.ics.uci.edu/somethings/anything/")
+    is_valid("http://abc.ics.uci.edu/somethings/anything/")
