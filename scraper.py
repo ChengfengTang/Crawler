@@ -33,7 +33,6 @@ domainCount = {}
 subdomains = defaultdict(set)
 
 def scraper(url, resp):
-    print("x")
     links = extract_next_links(url, resp)
     print(len(visited)) #The total number of pages
     print(longestPage)
@@ -118,8 +117,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        # print("d: " + domain)
-        # print("sd: " + subDomain)
+        print("d: " + domain)
+        print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
@@ -146,10 +145,10 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
-"""
+
 if __name__ == "__main__":
     is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
     print()
     is_valid("http://vision.ics.uci.edu/somethings/anything/")
+    print()
     is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
-"""
