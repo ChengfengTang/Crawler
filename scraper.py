@@ -109,7 +109,7 @@ def extract_next_links(url, resp):
     fp = []
     for i in range(len(text) - 2):
         threeG = text[i:i + 1]
-        temp = hash(threeG)
+        temp = hash(threeG.join())
         # Already visited a similar page
         if temp % 4 == 0:
             fp.append(temp)
