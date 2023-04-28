@@ -149,7 +149,7 @@ def is_valid(url):
 
         domain = ""
         subDomain = parsed.hostname
-        if subDomain is None:
+        if subDomain is None or subDomain == "calender.ics.uci.edu":
             return False
         if subDomain.startswith("www."):
             subDomain = subDomain[4:]
