@@ -117,7 +117,7 @@ def extract_next_links(url, resp):
             links.append(absoluteURL)
     # Testing    
     # print(links)
-    links = []
+    # links = []
     return links
 
 
@@ -188,9 +188,10 @@ def is_valid(url):
         print("TypeError for ", parsed)
         raise
 
-
+"""
 if __name__ == "__main__":
     is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
     print()
     is_valid("http://vision.ics.uci.edu/somethings/anything/")
     is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
+"""
