@@ -4,7 +4,7 @@ from urllib.parse import urljoin, urlparse, urldefrag
 from bs4 import BeautifulSoup
 from collections import defaultdict
 
-stopWords = [
+stop_words = [
     "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
     "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could",
     "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for",
@@ -85,7 +85,7 @@ def extract_next_links(url, resp):
             visited.append(absoluteURL)
     # Testing    
     #print(links)
-    links = []
+    links = []    
     return links
 
 def is_valid(url):
@@ -117,8 +117,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        print("d: " + domain)
-        print("sd: " + subDomain)
+        # print("d: " + domain)
+        # print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
@@ -145,10 +145,10 @@ def is_valid(url):
     except TypeError:
         print ("TypeError for ", parsed)
         raise
-
+"""
 if __name__ == "__main__":
     is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
     print()
     is_valid("http://vision.ics.uci.edu/somethings/anything/")
-    print()
     is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
+"""
