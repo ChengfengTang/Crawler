@@ -17,7 +17,14 @@ subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    #print(len(visited)) The total number of pages 
+    print(visited) #The total number of pages
+    print(longestPage)
+    print(words)
+    print(domainCount)
+    print(subdomains)
+    print()
+    print()
+    print()
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
