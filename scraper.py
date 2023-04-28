@@ -83,8 +83,7 @@ def is_valid(url):
         visited.append(url)
         domain = ""
         subDomain = parsed.hostname
-        domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
-        domain = re.search(domainP, subDomain).group("domain")
+        domain = subDomain.split(".")[0]
         print("d: " + domain)
         print("sd: " + subDomain)
         # Ex.
@@ -111,8 +110,3 @@ def is_valid(url):
         print ("TypeError for ", parsed)
         raise
 
-if __name__ == "__main__":
-    is_valid("http://vision.ics.uci.edu/somethings/anything/")
-    print()
-    is_valid("http://vision.ics.uci.edu/somethings/anything/")
-    is_valid("http://abc.ics.uci.edu/somethings/anything/")
