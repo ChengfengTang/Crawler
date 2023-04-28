@@ -140,7 +140,9 @@ def is_valid(url):
         # /calendar/YYYY/MM
         # /folder
         # /?page=1 ...
-        trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+"]
+        # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
+        trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+"]
         for x in trapPattern:
             if re.search(x,url):
                 return False
