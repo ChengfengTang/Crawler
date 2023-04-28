@@ -3,12 +3,9 @@ from urllib.parse import urljoin, urlparse, urldefrag
 
 from bs4 import BeautifulSoup
 
-visited = []
-domainCount = {}
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    #print(len(visited)) The total number of pages 
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
@@ -36,11 +33,10 @@ def extract_next_links(url, resp):
         # Absolute url without fragment part
         absoluteURL,fragment = urldefrag(absoluteURL)
         if is_valid(absoluteURL):
-            global visited
             links.append(absoluteURL)
-            visited.append(absoluteURL)
     # Testing    
     print(links)
+    print()
     links = []    
     return links
 
@@ -48,22 +44,14 @@ def is_valid(url):
     # Decide whether to crawl this url or not.
     # If you decide to crawl it, return True; otherwise return False.
     # There are already some conditions that return False.
-    global visited 
     try:
         parsed = urlparse(url)
         if parsed.scheme not in set(["http", "https"]):
             return False
         # Outside of allowed domains
-        #print(parsed.netloc)        
-        #if parsed.netloc not in set(["www.ics.uci.edu","www.cs.uci.edu","www.informatics.uci.edu", "www.stat.uci.edu"]):
-        #    return False
-        print(parsed.netloc)
-        #already visited
-        if url in visited:
+        #print(parsed.netloc)      
+        if parsed.netloc not in set(["www.ics.uci.edu","www.cs.uci.edu","www.informatics.uci.edu", "www.stat.uci.edu"]):
             return False
-        else:
-            global domainCount
-            domainCount[url] = 
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
