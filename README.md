@@ -6,17 +6,17 @@ Follow the politeness rule (0.5s per server) and only crawl websites that allows
 
 Multi-threaded crawling
 
-Detect and avoid infinite traps (repeated url patterns)
+Detect and avoid infinite traps (repeated url patterns) ☑️
 
-Crawl all pages with high textual information content
+Crawl all pages with high textual information content ☑️
 
-Detect and avoid sets of similar pages with no information 
+Detect and avoid sets of similar pages with no information ☑️
 
-Detect redirects and if the page redirects your crawler, index the redirected content
+Detect redirects and if the page redirects your crawler, index the redirected content ☑️
 
-Detect and avoid dead URLs that return a 200 status but no data (click here to see what the different HTTP status codes meanLinks to an external site.)
+Detect and avoid dead URLs that return a 200 status but no data (click here to see what the different HTTP status codes meanLinks to an external site.) ☑️
 
-Detect and avoid crawling very large files, especially if they have low information value
+Detect and avoid crawling very large files, especially if they have low information value ☑️
 
 
 
