@@ -33,7 +33,7 @@ domainCount = {}
 # Keeps track of depth, avoid traps
 depth = {}
 # 3-grams fingerprints
-fingerprints = set()
+fingerprints = []
 
 # Finds how many subdomains for each main domain
 subdomains = defaultdict(set)
@@ -118,7 +118,7 @@ def extract_next_links(url, resp):
         if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
             return []
 
-    fingerprints.add(fp)
+    fingerprints.append(fp)
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
