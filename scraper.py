@@ -39,7 +39,7 @@ def scraper(url, resp):
     links = extract_next_links(url, resp)
     print(len(visited))  # The total number of pages
     print(longestPage)
-    print(sorted(words.items(), key=lambda x: x[1], reverse=True))
+    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:10])
     print(domainCount)
     print(subdomains)
     return links
@@ -98,9 +98,9 @@ def extract_next_links(url, resp):
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
-        # print("redirected" + resp.url)
-        # print(url)
-        # print()
+        print("redirected" + resp.url)
+        print(url)
+        print()
         if is_valid(resp.url):
             links.append(resp.url)
 
@@ -115,7 +115,7 @@ def extract_next_links(url, resp):
         if is_valid(absoluteURL):
             global domainCount
             links.append(absoluteURL)
-    # Testing    
+    # Testing
     # print(links)
     # links = []
     return links
@@ -140,41 +140,37 @@ def is_valid(url):
         # /calendar/YYYY/MM
         # /folder
         # /?page=1 ...
-        # /ngs.ics.uci.edu/blog/page/115
-        # https://www.informatics.uci.edu/very-top-footer-menu-items/news/page/57
+        # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/blog/page/\d+",
-                       r"^(?!.*calendar\.ics\.uci\.edu).*"]
-
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+"]
         for x in trapPattern:
             if re.search(x,url):
                 return False
 
         domain = ""
         subDomain = parsed.hostname
-        if subDomain is None:
-            return False
         if subDomain.startswith("www."):
             subDomain = subDomain[4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
         domainM = re.search(domainP, subDomain)
-        if domainM:
+        if (domainM):
             domain = domainM.group("domain")
         else:
             # for url like uci.edu/
+            # print("no domain found " + subDomain)
             return False
         if subDomain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
         # print("d: " + domain)
         # print("sd: " + subDomain)
-
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
 
-        # if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
-        #    return False
+        # If not a subdomain
 
+        if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
+            return False
         domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
         # print(domainCount)
