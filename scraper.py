@@ -39,7 +39,7 @@ def scraper(url, resp):
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:5])
     print(domainCount)
     print(subdomains)
-    return [link for link in links if is_valid(link)]
+    return links
 
 def extract_next_links(url, resp):
     # Implementation required.
@@ -68,7 +68,7 @@ def extract_next_links(url, resp):
     # update longest page
     global longestPage
     longestPage = max(longestPage, len(text))
-    print("Current: " + url)
+
     links = []
     # Find all the links
     for temp in soup.find_all('a', href=True):
@@ -77,12 +77,15 @@ def extract_next_links(url, resp):
         absoluteURL = urljoin(url,href)
         # Absolute url without fragment part
         absoluteURL,fragment = urldefrag(absoluteURL)
-        global visited
-        links.append(absoluteURL)
-        visited.append(absoluteURL)
+        if is_valid(absoluteURL):
+            global visited
+            global domainCount
+            domainCount[absoluteURL] = domainCount.get(url,0) + 1
+            links.append(absoluteURL)
+            visited.append(absoluteURL)
     # Testing    
-    print(links)
-    # links = []
+    #print(links)
+    links = []
     return links
 
 def is_valid(url):
@@ -114,8 +117,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        print("d: " + domain)
-        print("sd: " + subDomain)
+        # print("d: " + domain)
+        # print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu

@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="1d6020f1-97ff-43c4-b48f-71e311a691cc" name="Changes" comment="" />
+    <list default="true" id="1d6020f1-97ff-43c4-b48f-71e311a691cc" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/scraper.py" beforeDir="false" afterPath="$PROJECT_DIR$/scraper.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,7 +51,7 @@
       <workItem from="1682645350273" duration="4620000" />
       <workItem from="1682653909420" duration="170000" />
       <workItem from="1682654101675" duration="11000" />
-      <workItem from="1682654253987" duration="2575000" />
+      <workItem from="1682654253987" duration="2972000" />
     </task>
     <servers />
   </component>
