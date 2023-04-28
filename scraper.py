@@ -4,6 +4,22 @@ from urllib.parse import urljoin, urlparse, urldefrag
 from bs4 import BeautifulSoup
 from collections import defaultdict
 
+stop_words = [
+    "a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at",
+    "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "can't", "cannot", "could",
+    "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for",
+    "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "he's",
+    "her", "here", "here's", "hers", "herself", "him", "himself", "his", "how", "how's", "i", "i'd", "i'll", "i'm",
+    "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't",
+    "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours",
+    "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so",
+    "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's",
+    "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under",
+    "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's",
+    "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't",
+    "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
+]
+
 # Finds the number of unique page
 visited = []
 # Finds the 50 most common words
@@ -12,19 +28,17 @@ words = {}
 longestPage = 0;
 # Finds how many pages for each subdomain
 domainCount = {}
+
 # Finds how many subdomains for each main domain
 subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    print(visited) #The total number of pages
+    print(len(visited)) #The total number of pages
     print(longestPage)
-    print(words)
+    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:5])
     print(domainCount)
     print(subdomains)
-    print()
-    print()
-    print()
     return [link for link in links if is_valid(link)]
 
 def extract_next_links(url, resp):
@@ -48,7 +62,8 @@ def extract_next_links(url, resp):
     # Find all the words
     global words
     for x in re.findall(r'\b\w+\b', text):
-        words[x] = words.get(x,0) +1
+        if(x not in stopWords): # self-exp
+            words[x] = words.get(x,0) +1
 
     # update longest page
     global longestPage
@@ -102,8 +117,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        print("d: " + domain)
-        print("sd: " + subDomain)
+        # print("d: " + domain)
+        # print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
