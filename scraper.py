@@ -82,7 +82,7 @@ def extract_next_links(url, resp):
         visited.append(absoluteURL)
     # Testing    
     print(links)
-    links = []
+    # links = []
     return links
 
 def is_valid(url):
@@ -114,8 +114,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        # print("d: " + domain)
-        # print("sd: " + subDomain)
+        print("d: " + domain)
+        print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
