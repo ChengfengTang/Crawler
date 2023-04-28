@@ -59,7 +59,7 @@ def extract_next_links(url, resp):
     if resp.status != 200:
         return []
 
-    print("resp: " + resp.url + "   |  url: " + url)
+    #print("resp: " + resp.url + "   |  url: " + url)
     # Should help with infinite traps
     global visited
     if resp.url in visited:
@@ -72,9 +72,10 @@ def extract_next_links(url, resp):
 
     # there should be at least 50% of the content in text
     # Since we are crawling school website, we are not interested in irrelevant
-    contentLen = int(resp.raw_response.headers.get("Content-Length", 0))
-    print("CL:" , contentLen)
-    print("TL: " , len(text))
+    # If content-length is 0, just set it to len(text)
+    contentLen = int(resp.raw_response.headers.get("Content-Length", len(text)))
+    #print("CL:" , contentLen)
+    #print("TL: " , len(text))
     if (len(text) / contentLen) < 0.25:
         return []
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
