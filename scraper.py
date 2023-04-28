@@ -77,15 +77,13 @@ def extract_next_links(url, resp):
         absoluteURL = urljoin(url,href)
         # Absolute url without fragment part
         absoluteURL,fragment = urldefrag(absoluteURL)
-        if is_valid(absoluteURL):
-            global visited
-            global domainCount
-            domainCount[absoluteURL] = domainCount.get(url,0) + 1
-            links.append(absoluteURL)
-            visited.append(absoluteURL)
+        global visited
+        global domainCount
+        links.append(absoluteURL)
+        visited.append(absoluteURL)
     # Testing    
     #print(links)
-    links = []    
+    # links = []
     return links
 
 def is_valid(url):
