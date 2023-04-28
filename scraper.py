@@ -105,7 +105,7 @@ def extract_next_links(url, resp):
     if depth.get(resp.url, 0) > 10:
         return []
 
-    """
+
     global fingerprints
     fp = []
     for i in range(len(text) - 2):
@@ -119,7 +119,7 @@ def extract_next_links(url, resp):
         if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
             return []
     fingerprints.append(fp)
-    """
+    
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
