@@ -141,23 +141,26 @@ def is_valid(url):
         # /folder
         # /?page=1 ...
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
+        # /ngs.ics.uci.edu/blog/page/115
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+"]
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+",
+                       r"/blog/page/\d+"]
+
         for x in trapPattern:
             if re.search(x,url):
                 return False
 
         domain = ""
         subDomain = parsed.hostname
-        if subDomain.startswith("www."):
-            subDomain = subDomain[4:]
+        if subDomain:
+            if subDomain.startswith("www."):
+                subDomain = subDomain[4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
         domainM = re.search(domainP, subDomain)
         if (domainM):
             domain = domainM.group("domain")
         else:
             # for url like uci.edu/
-            # print("no domain found " + subDomain)
             return False
         if subDomain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
