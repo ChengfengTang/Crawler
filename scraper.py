@@ -33,6 +33,7 @@ domainCount = {}
 subdomains = defaultdict(set)
 
 def scraper(url, resp):
+    print("x")
     links = extract_next_links(url, resp)
     print(len(visited)) #The total number of pages
     print(longestPage)
