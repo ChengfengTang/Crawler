@@ -138,10 +138,11 @@ def is_valid(url):
         # /calendar/YYYY/MM
         # /folder
         # /?page=1 ...
-        trap_pattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+"}
+        trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+"]
+        for x in trapPattern:
+            if re.search(x,url):
+                return False
 
-        if re.search(trap_pattern, url):
-            return False
         domain = ""
         subDomain = parsed.hostname
         if subDomain.startswith("www."):
