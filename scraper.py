@@ -142,8 +142,7 @@ def is_valid(url):
         # /?page=1 ...
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+",
-                       r"^(?!.*calendar\.ics\.uci\.edu).*"]
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+",]
         for x in trapPattern:
             if re.search(x,url):
                 return False
@@ -172,8 +171,8 @@ def is_valid(url):
 
         # If not a subdomain
 
-        if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
-            return False
+        # if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
+        #    return False
         domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
         # print(domainCount)
