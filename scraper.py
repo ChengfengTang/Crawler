@@ -73,8 +73,8 @@ def extract_next_links(url, resp):
     # there should be at least 50% of the content in text
     # Since we are crawling school website, we are not interested in irrelevant
     contentLen = int(resp.raw_response.headers.get("Content-Length", 0))
-    print("CL:" + contentLen)
-    print("TL: " + len(text))
+    print("CL:" , contentLen)
+    print("TL: " , len(text))
     if (len(text) / contentLen) < 0.25:
         return []
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
