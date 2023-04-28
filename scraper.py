@@ -62,7 +62,7 @@ def extract_next_links(url, resp):
             links.append(absoluteURL)
             visited.append(absoluteURL)
     # Testing    
-    print(links)
+    #print(links)
     links = []    
     return links
 
@@ -90,7 +90,11 @@ def is_valid(url):
         if (domainM):
             domain = domainM.group("domain")
         else:
-            print("no domain found " + subDomain)
+            # for url like uci.edu/
+            #print("no domain found " + subDomain)
+            return False
+        if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
+            domain = subDomain
         print("d: " + domain)
         print("sd: " + subDomain)
         # Ex.
@@ -98,14 +102,13 @@ def is_valid(url):
         # subdomain: vision.ics.edu
 
         # If not a subdomain
-        if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
-            domain = subDomain
+
         if domain not in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
             return False
         domainCount[subDomain] = domainCount.get(subDomain,0) + 1
         subdomains[domain].add(subDomain)
-        print(domainCount)
-        print(subdomains)
+        #print(domainCount)
+        #print(subdomains)
 
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
