@@ -71,7 +71,7 @@ def extract_next_links(url, resp):
 
     # there should be at least 50% of the content in text
     # Since we are crawling school website, we are not interested in irrelevant
-    contentLen = int(resp.headers.get("Content-Length", 0))
+    contentLen = int(resp.get("Content-Length", 0))
     print(contentLen)
     if (len(text) / contentLen) < 0.25:
         return []
