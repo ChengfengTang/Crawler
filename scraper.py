@@ -30,6 +30,8 @@ words = {}
 longestPage = 0;
 # Finds how many pages for each subdomain
 domainCount = {}
+# Keeps track of depth, avoid traps
+depth = {}
 
 # Finds how many subdomains for each main domain
 subdomains = defaultdict(set)
@@ -59,7 +61,7 @@ def extract_next_links(url, resp):
     if resp.status != 200:
         return []
 
-    #print("resp: " + resp.url + "   |  url: " + url)
+    # print("resp: " + resp.url + "   |  url: " + url)
     # Should help with infinite traps
     global visited
     if resp.url in visited:
@@ -74,8 +76,8 @@ def extract_next_links(url, resp):
     # Since we are crawling school website, we are not interested in irrelevant
     # If content-length is 0, just set it to len(text)
     contentLen = int(resp.raw_response.headers.get("Content-Length", len(text)))
-    #print("CL:" , contentLen)
-    #print("TL: " , len(text))
+    # print("CL:" , contentLen)
+    # print("TL: " , len(text))
     if (len(text) / contentLen) < 0.25:
         return []
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
@@ -96,6 +98,10 @@ def extract_next_links(url, resp):
 
     links = []
 
+    global depth
+    if depth.get(resp.url, 0) > 10:
+        return []
+
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
         # print("redirected" + resp.url)
@@ -115,6 +121,7 @@ def extract_next_links(url, resp):
         if is_valid(absoluteURL):
             global domainCount
             links.append(absoluteURL)
+            depth[absoluteURL] = depth.get(resp.url, 0) + 1
     # Testing
     # print(links)
     # links = []
@@ -130,6 +137,9 @@ def is_valid(url):
     global subdomains
     try:
         parsed = urlparse(url)
+        robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
+        # Not sure how to get robots.txt without using request
+
         if parsed.scheme not in set(["http", "https"]):
             return False
         # Already visited
@@ -142,9 +152,9 @@ def is_valid(url):
         # /?page=1 ...
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
         trapPattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+",
-                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+",]
+                       r"/www\.ics\.uci\.edu/community/news/view_news\?id=\d+", ]
         for x in trapPattern:
-            if re.search(x,url):
+            if re.search(x, url):
                 return False
 
         domain = ""
@@ -191,6 +201,7 @@ def is_valid(url):
     except TypeError:
         print("TypeError for ", parsed)
         raise
+
 
 """
 if __name__ == "__main__":
