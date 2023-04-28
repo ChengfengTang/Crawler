@@ -13,9 +13,11 @@ stopWords = [
     "i've", "if", "in", "into", "is", "isn't", "it", "it's", "its", "itself", "let's", "me", "more", "most", "mustn't",
     "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours",
     "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so",
-    "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's",
+    "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there",
+    "there's",
     "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under",
-    "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what", "what's",
+    "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "we're", "we've", "were", "weren't", "what",
+    "what's",
     "when", "when's", "where", "where's", "which", "while", "who", "who's", "whom", "why", "why's", "with", "won't",
     "would", "wouldn't", "you", "you'd", "you'll", "you're", "you've", "your", "yours", "yourself", "yourselves"
 ]
@@ -32,14 +34,16 @@ domainCount = {}
 # Finds how many subdomains for each main domain
 subdomains = defaultdict(set)
 
+
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    print(len(visited)) #The total number of pages
+    print(len(visited))  # The total number of pages
     print(longestPage)
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:5])
     print(domainCount)
     print(subdomains)
     return links
+
 
 def extract_next_links(url, resp):
     # Implementation required.
@@ -54,39 +58,65 @@ def extract_next_links(url, resp):
     # Check if the response status is OK (200)
     if resp.status != 200:
         return []
+
+    # Should help with infinite traps
+    global visited
+    if resp.url in visited:
+        return ß[]
+    
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
     text = soup.get_text()
 
+    # there should be at least 50% of the content in text
+    # Since we are crawling school website, we are not interested in irrelevant
+    contentLen = int(resp.headers.get("Content-Length", 0))
+    print(contentLen)
+    if (len(text) / contentLen) < 0.25:
+        return []
+    # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
+    # 500KB/Page is too large, a normal pure text size is around 200-300 KB, we are
+    # Not interested in irrelevant websites
+    if contentLen > 512000:
+        return []
+
     # Find all the words
     global words
     for x in re.findall(r'[a-zA-Z0-9]+', text.lower()):
-        if(x not in stopWords): # self-exp
-            words[x] = words.get(x,0) +1
+        if x not in stopWords:  # self-exp
+            words[x] = words.get(x, 0) + 1
 
     # update longest page
     global longestPage
     longestPage = max(longestPage, len(text))
 
     links = []
+
+    # Indexing the redirected url only if it's worth visiting
+    if resp.url != url:
+        print("redirected" + resp.url)
+        print(url)
+        print()
+        if is_valid(resp.url):
+            links.append(resp.url)
+
     # Find all the links
     for temp in soup.find_all('a', href=True):
         href = temp.get('href')
         # Absolute url with href
-        absoluteURL = urljoin(url,href)
+        absoluteURL = urljoin(url, href)
         # Absolute url without fragment part
-        absoluteURL,fragment = urldefrag(absoluteURL)
+        absoluteURL, fragment = urldefrag(absoluteURL)
+        # If the link is valid and should be visited, add it
         if is_valid(absoluteURL):
-            global visited
             global domainCount
-            domainCount[absoluteURL] = domainCount.get(url,0) + 1
             links.append(absoluteURL)
-            visited.append(absoluteURL)
     # Testing    
-    #print(links)
-    # links = []    
+    # print(links)
+    links = []
     return links
+
 
 def is_valid(url):
     # Decide whether to crawl this url or not.
@@ -106,16 +136,16 @@ def is_valid(url):
         domain = ""
         subDomain = parsed.hostname
         if subDomain.startswith("www."):
-            subDomain = subDomain [4:]
+            subDomain = subDomain[4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
         domainM = re.search(domainP, subDomain)
         if (domainM):
             domain = domainM.group("domain")
         else:
             # for url like uci.edu/
-            #print("no domain found " + subDomain)
+            # print("no domain found " + subDomain)
             return False
-        if subDomain in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
+        if subDomain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
         # print("d: " + domain)
         # print("sd: " + subDomain)
@@ -125,12 +155,12 @@ def is_valid(url):
 
         # If not a subdomain
 
-        if domain not in set(["ics.uci.edu","cs.uci.edu","informatics.uci.edu", "stat.uci.edu"]):
+        if domain not in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             return False
-        domainCount[subDomain] = domainCount.get(subDomain,0) + 1
+        domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
-        #print(domainCount)
-        #print(subdomains)
+        # print(domainCount)
+        # print(subdomains)
 
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
@@ -143,12 +173,12 @@ def is_valid(url):
             + r"|rm|smil|wmv|swf|wma|zip|rar|gz)$", parsed.path.lower())
 
     except TypeError:
-        print ("TypeError for ", parsed)
+        print("TypeError for ", parsed)
         raise
-"""
+
+
 if __name__ == "__main__":
     is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
     print()
     is_valid("http://vision.ics.uci.edu/somethings/anything/")
     is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
-"""
