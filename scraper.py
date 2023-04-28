@@ -32,6 +32,8 @@ longestPage = 0;
 domainCount = {}
 # Keeps track of depth, avoid traps
 depth = {}
+# 3-grams fingerprints
+fingerprints = set()
 
 # Finds how many subdomains for each main domain
 subdomains = defaultdict(set)
@@ -102,6 +104,21 @@ def extract_next_links(url, resp):
     # Might be going too deep if we are 10 levels down
     if depth.get(resp.url, 0) > 10:
         return []
+
+    global fingerprints
+    fp = []
+    for i in range(len(text) - 2):
+        threeG = text[i:i + 1]
+        temp = hash(threeG)
+        # Already visited a similar page
+        if temp % 4 == 0:
+            fp.append(temp)
+    for x in fingerprints:
+        # similarity level S > 90% near duplicate
+        if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
+            return []
+
+    fingerprints.add(fp)
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
