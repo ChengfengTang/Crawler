@@ -59,11 +59,12 @@ def extract_next_links(url, resp):
     if resp.status != 200:
         return []
 
+
     # Should help with infinite traps
     global visited
     if resp.url in visited:
         return []
-    
+
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
@@ -71,7 +72,7 @@ def extract_next_links(url, resp):
 
     # there should be at least 50% of the content in text
     # Since we are crawling school website, we are not interested in irrelevant
-    contentLen = int(resp.get("Content-Length", 0))
+    contentLen = int(resp.raw_response.headers.get("Content-Length", 0))
     print(contentLen)
     if (len(text) / contentLen) < 0.25:
         return []
@@ -133,6 +134,14 @@ def is_valid(url):
         if url in visited:
             return False
         visited.append(url)
+        # Some trap patterns mentioned in class
+        # /calendar/YYYY/MM
+        # /folder
+        # /?page=1 ...
+        trap_pattern = [r"/calendar/\d{4}/\d{2}", r"(/folder)+", r"\?page=\d+"}
+
+        if re.search(trap_pattern, url):
+            return False
         domain = ""
         subDomain = parsed.hostname
         if subDomain.startswith("www."):
