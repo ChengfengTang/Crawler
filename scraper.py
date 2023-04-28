@@ -68,7 +68,7 @@ def extract_next_links(url, resp):
     # update longest page
     global longestPage
     longestPage = max(longestPage, len(text))
-
+    print("Current: " + url)
     links = []
     # Find all the links
     for temp in soup.find_all('a', href=True):
