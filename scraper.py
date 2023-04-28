@@ -152,12 +152,13 @@ def is_valid(url):
 
         domain = ""
         subDomain = parsed.hostname
-        if subDomain:
-            if subDomain.startswith("www."):
-                subDomain = subDomain[4:]
+        if subDomain is None:
+            return False
+        if subDomain.startswith("www."):
+            subDomain = subDomain[4:]
         domainP = r"(?:[^.]+\.)(?P<domain>[^.]+\..+)$"
         domainM = re.search(domainP, subDomain)
-        if (domainM):
+        if domainM:
             domain = domainM.group("domain")
         else:
             # for url like uci.edu/
