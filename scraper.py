@@ -43,8 +43,9 @@ def scraper(url, resp):
     links = extract_next_links(url, resp)
     print(len(visited))  # The total number of pages
     print(longestPage)
-    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:25])
-    print(domainCount)
+    print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:60])
+    for x, y in domainCount.values():
+        print(x, len(y))
     print(subdomains)
     return links
 
@@ -105,7 +106,6 @@ def extract_next_links(url, resp):
     if depth.get(resp.url, 0) > 10:
         return []
 
-
     global fingerprints
     fp = []
     for i in range(len(text) - 2):
@@ -119,7 +119,6 @@ def extract_next_links(url, resp):
         if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
             return []
     fingerprints.append(fp)
-
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
