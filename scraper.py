@@ -41,14 +41,17 @@ subdomains = defaultdict(set)
 
 def scraper(url, resp):
     links = extract_next_links(url, resp)
-    print(len(visited))  # The total number of pages
-    print(longestPage)
+    print()
+    print("Total # of pages visited: " , len(visited))  # The total number of pages
+    print("Longest page has ", longestPage, "words")
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:60])
+    print()
     for x, y in subdomains.items():
         print(x, len(y), end=",")
     print()
     for x, y in sorted(domainCount.items()):
         print(x, y, end=",")
+    print()
     return links
 
 
