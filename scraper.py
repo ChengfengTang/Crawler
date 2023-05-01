@@ -44,7 +44,7 @@ def scraper(url, resp):
     links = extract_next_links(url, resp)
     print()
     print("Total # of pages visited: " , len(visited))  # The total number of pages
-    print("Longest page has ", longestPage, "words")
+    print("Longest page ", longestPageURL, " has ", longestPage, "words")
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:60])
     print()
     for x, y in subdomains.items():
