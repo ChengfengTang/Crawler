@@ -28,6 +28,7 @@ visited = []
 words = {}
 # Finds the longest page
 longestPage = 0;
+longestPageURL = "";
 # Finds how many pages for each subdomain
 domainCount = {}
 # Keeps track of depth, avoid traps
@@ -102,7 +103,10 @@ def extract_next_links(url, resp):
 
     # update longest page
     global longestPage
-    longestPage = max(longestPage, len(text))
+    global longestPageURL
+    if(longestPage < len(text)):
+        longestPage = len(text)
+        longestPageURL = resp.url
 
     links = []
 
