@@ -1,5 +1,6 @@
 import re
 from urllib.parse import urljoin, urlparse, urldefrag
+from urllib.robotparser import RobotFileParser
 
 from bs4 import BeautifulSoup
 from collections import defaultdict
@@ -23,7 +24,7 @@ stopWords = [
 ]
 
 # Finds the number of unique page
-visited = []
+visited = set()
 # Finds the 50 most common words
 words = {}
 # Finds the longest page
@@ -32,7 +33,7 @@ longestPageURL = "";
 # Finds how many pages for each subdomain
 domainCount = {}
 # Keeps track of depth, avoid traps
-depth = {}
+# depth = {}
 # 3-grams fingerprints
 fingerprints = []
 
@@ -72,9 +73,6 @@ def extract_next_links(url, resp):
 
     # print("resp: " + resp.url + "   |  url: " + url)
     # Should help with infinite traps
-    global visited
-    if resp.url in visited:
-        return []
 
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
@@ -87,16 +85,19 @@ def extract_next_links(url, resp):
     contentLen = int(resp.raw_response.headers.get("Content-Length", len(text)))
     # print("CL:" , contentLen)
     # print("TL: " , len(text))
-    if (len(text) / contentLen) < 0.25:
+    if (len(text) / contentLen) < 0.1:
         return []
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
     # 500KB/Page is too large, a normal pure text size is around 200-300 KB, we are
     # Not interested in irrelevant websites
+    """
     if contentLen > 512000:
         return []
+    """
 
     # Find all the words
     global words
+    # Tokenization Needs improvement
     for x in re.findall(r'[a-zA-Z0-9]+', text.lower()):
         if x not in stopWords:  # self-exp
             words[x] = words.get(x, 0) + 1
@@ -110,10 +111,12 @@ def extract_next_links(url, resp):
 
     links = []
 
+    """
     global depth
     # Might be going too deep if we are 10 levels down
     if depth.get(resp.url, 0) > 10:
         return []
+    """
 
     global fingerprints
     fp = []
@@ -165,6 +168,13 @@ def is_valid(url):
     try:
         parsed = urlparse(url)
         robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
+        rp = RobotFileParser()
+        rp.set_url(robotsUrl)
+        print(robotsUrl)
+        rp.read()
+
+        if not rp.can_fetch("*", url):
+            print("no!")
 
         robotsTxt = "User-agent: *                   # All other spiders should avoid" + \
                     "Disallow: /bin/" + \
@@ -178,7 +188,7 @@ def is_valid(url):
         # Already visited
         if url in visited:
             return False
-        visited.append(url)
+        visited.add(url)
         # Some trap patterns mentioned in class
         # /calendar/YYYY/MM
         # /folder
@@ -212,8 +222,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        # print("d: " + domain)
-        # print("sd: " + subDomain)
+        #print("d: " + domain)
+        #print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
@@ -224,9 +234,9 @@ def is_valid(url):
             return False
         domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
-        # print(domainCount)
-        # print(subdomains)
-
+        #print(domainCount)
+        #print(subdomains)
+        #print(visited)
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
@@ -242,10 +252,6 @@ def is_valid(url):
         raise
 
 
-"""
 if __name__ == "__main__":
-    is_valid("http://www.vision.ics.uci.edu/somethings/anything/")
+    is_valid("https://www.ics.uci.edu/brochure-tiles/how-we-live/")
     print()
-    is_valid("http://vision.ics.uci.edu/somethings/anything/")
-    is_valid("http://www.abc.ics.uci.edu/somethings/anything/")
-"""
