@@ -136,11 +136,12 @@ def extract_next_links(url, resp):
     for x in fingerprints:
     # similarity level S > 90% near duplicate
     # AKA Already visited a similar page
-    union = len(set(fp).union(set(x)))
-    if union != 0:
-        similarity = len(set(fp).intersection(set(x))) / union
-        if similarity > 0.9:
-            return []
+        union = len(set(fp).union(set(x)))
+        if union != 0:
+            similarity = len(set(fp).intersection(set(x))) / union
+            if similarity > 0.9:
+                return []
+    fingerprints.append(fp)
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
