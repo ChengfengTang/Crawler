@@ -33,7 +33,7 @@ longestPageURL = "";
 # Finds how many pages for each subdomain
 domainCount = {}
 # Keeps track of depth, avoid traps
-# depth = {}
+depth = {}
 # 3-grams fingerprints
 fingerprints = []
 
@@ -42,9 +42,11 @@ subdomains = defaultdict(set)
 
 
 def scraper(url, resp):
+    # Extract next links from the current URL and response
     links = extract_next_links(url, resp)
+    # Print summary statistics
     print()
-    print("Total # of pages visited: " , len(visited))  # The total number of pages
+    print("Total # of pages visited: ", len(visited))  # The total number of pages
     print("Longest page ", longestPageURL, " has ", longestPage, "words")
     print(sorted(words.items(), key=lambda x: x[1], reverse=True)[:60])
     print()
@@ -67,12 +69,13 @@ def extract_next_links(url, resp):
     #         resp.raw_response.url: the url, again
     #         resp.raw_response.content: the content of the page!
     # Return a list with the hyperlinks (as strings) scrapped from resp.raw_response.content
+
     # Check if the response status is OK (200)
     if resp.status != 200:
         return []
 
     # print("resp: " + resp.url + "   |  url: " + url)
-    # Should help with infinite traps
+
     parsed = urlparse(resp.url)
     robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
     rp = RobotFileParser()
@@ -81,12 +84,13 @@ def extract_next_links(url, resp):
     # Not allowed in robots.txt
     if not rp.can_fetch("*", url):
         return []
+
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
     text = soup.get_text()
 
-    # there should be at least 50% of the content in text
+    # there should be at least 10% of the content in text
     # Since we are crawling school website, we are not interested in irrelevant
     # If content-length is 0, just set it to len(text)
     contentLen = int(resp.raw_response.headers.get("Content-Length", len(text)))
@@ -97,10 +101,8 @@ def extract_next_links(url, resp):
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
     # 500KB/Page is too large, a normal pure text size is around 200-300 KB, we are
     # Not interested in irrelevant websites
-    """
     if contentLen > 512000:
         return []
-    """
 
     # Find all the words
     global words
@@ -112,18 +114,17 @@ def extract_next_links(url, resp):
     # update longest page
     global longestPage
     global longestPageURL
-    if(longestPage < len(text)):
+    if (longestPage < len(text)):
         longestPage = len(text)
         longestPageURL = resp.url
 
-    links = []
-
-    """
     global depth
     # Might be going too deep if we are 10 levels down
     if depth.get(resp.url, 0) > 10:
         return []
-    """
+
+    # Find all the links and add valid ones to the list
+    links = []
 
     global fingerprints
     fp = []
@@ -180,9 +181,6 @@ def is_valid(url):
         visited.add(url)
 
         parsed = urlparse(url)
-        robotsTxt = "User-agent: *                   # All other spiders should avoid" + \
-                    "Disallow: /bin/" + \
-                    "Disallow: /~mpufal/          # Ticket #50447 requested by ugrad"
 
         # Not sure how to get robots.txt without using request
         # Manual sets here
@@ -223,8 +221,8 @@ def is_valid(url):
             return False
         if subDomain in set(["ics.uci.edu", "cs.uci.edu", "informatics.uci.edu", "stat.uci.edu"]):
             domain = subDomain
-        #print("d: " + domain)
-        #print("sd: " + subDomain)
+        # print("d: " + domain)
+        # print("sd: " + subDomain)
         # Ex.
         # domain: ics.uci.edu
         # subdomain: vision.ics.edu
@@ -235,9 +233,9 @@ def is_valid(url):
             return False
         domainCount[subDomain] = domainCount.get(subDomain, 0) + 1
         subdomains[domain].add(subDomain)
-        #print(domainCount)
-        #print(subdomains)
-        #print(visited)
+        # print(domainCount)
+        # print(subdomains)
+        # print(visited)
         return not re.match(
             r".*\.(css|js|bmp|gif|jpe?g|ico"
             + r"|png|tiff?|mid|mp2|mp3|mp4"
@@ -251,6 +249,7 @@ def is_valid(url):
     except TypeError:
         print("TypeError for ", parsed)
         raise
+
 
 """
 if __name__ == "__main__":
