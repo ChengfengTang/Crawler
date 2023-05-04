@@ -73,7 +73,14 @@ def extract_next_links(url, resp):
 
     # print("resp: " + resp.url + "   |  url: " + url)
     # Should help with infinite traps
-
+    parsed = urlparse(resp.url)
+    robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
+    rp = RobotFileParser()
+    rp.set_url(robotsUrl)
+    rp.read()
+    # Not allowed in robots.txt
+    if not rp.can_fetch("*", url):
+        return []
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
@@ -151,7 +158,7 @@ def extract_next_links(url, resp):
         if is_valid(absoluteURL):
             global domainCount
             links.append(absoluteURL)
-            depth[absoluteURL] = depth.get(resp.url, 0) + 1
+            # depth[absoluteURL] = depth.get(resp.url, 0) + 1
     # Testing
     # print(links)
     # links = []
@@ -166,16 +173,13 @@ def is_valid(url):
     global domainCount
     global subdomains
     try:
+        # Already visited
+        if url in visited:
+            return False
+
+        visited.add(url)
+
         parsed = urlparse(url)
-        robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
-        rp = RobotFileParser()
-        rp.set_url(robotsUrl)
-        print(robotsUrl)
-        rp.read()
-
-        if not rp.can_fetch("*", url):
-            print("no!")
-
         robotsTxt = "User-agent: *                   # All other spiders should avoid" + \
                     "Disallow: /bin/" + \
                     "Disallow: /~mpufal/          # Ticket #50447 requested by ugrad"
@@ -185,10 +189,7 @@ def is_valid(url):
 
         if parsed.scheme not in set(["http", "https"]):
             return False
-        # Already visited
-        if url in visited:
-            return False
-        visited.add(url)
+
         # Some trap patterns mentioned in class
         # /calendar/YYYY/MM
         # /folder
@@ -251,7 +252,8 @@ def is_valid(url):
         print("TypeError for ", parsed)
         raise
 
-
+"""
 if __name__ == "__main__":
     is_valid("https://www.ics.uci.edu/brochure-tiles/how-we-live/")
     print()
+"""
