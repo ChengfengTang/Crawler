@@ -158,11 +158,13 @@ def extract_next_links(url, resp):
         absoluteURL = urljoin(url, href)
         # Absolute url without fragment part
         absoluteURL, fragment = urldefrag(absoluteURL)
-        # If the link is valid and should be visited, add it
-        if is_valid(absoluteURL):
+               # Already visited
+        if absoluteURL not in visited and is_valid(absoluteURL):
             global domainCount
             links.append(absoluteURL)
-            # depth[absoluteURL] = depth.get(resp.url, 0) + 1
+            visited.add(absoluteURL)
+        # If the link is valid and should be visited, add it
+            depth[absoluteURL] = depth.get(resp.url, 0) + 1
     # Testing
     # print(links)
     # links = []
@@ -177,11 +179,6 @@ def is_valid(url):
     global domainCount
     global subdomains
     try:
-        # Already visited
-        if url in visited:
-            return False
-
-        visited.add(url)
 
         parsed = urlparse(url)
 
