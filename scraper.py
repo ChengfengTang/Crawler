@@ -101,7 +101,7 @@ def extract_next_links(url, resp):
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
     # 500KB/Page is too large, a normal pure text size is around 200-300 KB, we are
     # Not interested in irrelevant websites
-    if contentLen > 512000:
+    if contentLen > 5120000:
         return []
 
     # Find all the words
@@ -134,11 +134,13 @@ def extract_next_links(url, resp):
         if temp % 4 == 0:
             fp.append(temp)
     for x in fingerprints:
-        # similarity level S > 90% near duplicate
-        # AKA Already visited a similar page
-        if len(set(fp).intersection(set(x))) / len(set(fp).union(set(x))) > 0.9:
+    # similarity level S > 90% near duplicate
+    # AKA Already visited a similar page
+    union = len(set(fp).union(set(x)))
+    if union != 0:
+        similarity = len(set(fp).intersection(set(x))) / union
+        if similarity > 0.9:
             return []
-    fingerprints.append(fp)
 
     # Indexing the redirected url only if it's worth visiting
     if resp.url != url:
