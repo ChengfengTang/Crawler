@@ -195,7 +195,7 @@ def is_valid(url):
         # /www.ics.uci.edu/community/news/view_news?id=2111 seems like a trap during testing
         trapPattern = [r"/calendar/\d{4}/\d{2}",
                        r"(/folder)+",
-                       r"\?page=\d+",
+                  
                        # not allowed by robots
                        r"ics.uci.edu/bin",
                        r"ics.uci.edu/~mpufal",
