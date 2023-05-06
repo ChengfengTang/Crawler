@@ -75,7 +75,7 @@ def extract_next_links(url, resp):
         return []
 
     # print("resp: " + resp.url + "   |  url: " + url)
-
+    """
     parsed = urlparse(resp.url)
     robotsUrl = parsed.scheme + "://" + parsed.netloc + "/robots.txt"
     rp = RobotFileParser()
@@ -84,7 +84,7 @@ def extract_next_links(url, resp):
     # Not allowed in robots.txt
     if not rp.can_fetch("*", url):
         return []
-
+    """
     # Extract the URLs from the response content
     # Create a bs4 object called "soup" and scrape the html response using a html parser
     soup = BeautifulSoup(resp.raw_response.content, 'html.parser')
@@ -96,12 +96,13 @@ def extract_next_links(url, resp):
     contentLen = int(resp.raw_response.headers.get("Content-Length", len(text)))
     # print("CL:" , contentLen)
     # print("TL: " , len(text))
-    if (len(text) / contentLen) < 0.1:
-        return []
+    if contentLen != 0:
+        if (len(text) / contentLen) < 0.1:
+            return []
     # https://stackoverflow.com/questions/2773396/whats-the-content-length-field-in-http-header
     # 500KB/Page is too large, a normal pure text size is around 200-300 KB, we are
     # Not interested in irrelevant websites
-    if contentLen > 5120000:
+    if contentLen > 512000:
         return []
 
     # Find all the words
